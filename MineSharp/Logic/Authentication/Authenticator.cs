@@ -10,7 +10,7 @@ namespace MineSharp.Logic.Authentication
     {
         public static LoginResult Authenticate(string username, string host, uint port)
         {
-
+            Console.WriteLine("{0} logging in...", username);
             return LoginResult.IllegalAccount; //TODO: check through post
         }
     }

@@ -95,7 +95,7 @@ namespace MineSharp.Networking
         {
             byte[] data = packet.GetBytes();
             sock.Send(data); //TODO: async send (if possible)
-            Console.WriteLine("Sent: {0}", BytesToString(data));
+           // Console.WriteLine("Sent: {0}", BytesToString(data));
         }
 
         private static string BytesToString(byte[] data)
