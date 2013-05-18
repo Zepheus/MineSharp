@@ -44,15 +44,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Handlers\Handlers.cs" />
+    <Compile Include="Handlers\PacketHandlerAttribute.cs" />
+    <Compile Include="Handlers\PacketManager.cs" />
+    <Compile Include="Handlers\RecvOpcode.cs" />
+    <Compile Include="Handlers\SendOpcode.cs" />
+    <Compile Include="Logic\Authentication\Authenticator.cs" />
+    <Compile Include="Logic\Authentication\LoginResult.cs" />
     <Compile Include="Networking\Client.cs" />
-    <Compile Include="Networking\Handlers.cs" />
-    <Compile Include="Networking\PacketHandlerAttribute.cs" />
-    <Compile Include="Networking\PacketManager.cs" />
     <Compile Include="Networking\PacketReader.cs" />
     <Compile Include="Networking\PacketWriter.cs" />
-    <Compile Include="Networking\RecvOpcode.cs" />
-    <Compile Include="Networking\SendOpcode.cs" />
     <Compile Include="Networking\Server.cs" />
+    <Compile Include="Logic\Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\Reflector.cs" />
@@ -60,6 +63,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

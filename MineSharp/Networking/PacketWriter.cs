@@ -20,6 +20,8 @@ using System.Linq;
 using System.Text;
 using System.IO;
 
+using MineSharp.Handlers;
+
 namespace MineSharp.Networking
 {
     public class PacketWriter : BinaryWriter
@@ -74,7 +76,8 @@ namespace MineSharp.Networking
             Write(buffer);
         }
 
-        public void WriteString(string value) {
+        public void WriteString(string format, params object[] list) {
+            string value = String.Format(format, list);
             Write((ushort)value.Length);
             WriteSwappedRawString(value);
         }

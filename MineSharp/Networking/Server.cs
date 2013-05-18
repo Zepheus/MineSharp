@@ -37,7 +37,7 @@ namespace MineSharp.Networking
         public ushort Port { get; private set; }
         public byte Max { get; private set; }
         public bool IsListening { get; private set; }
-        public int PlayerCount { get { return clients.Count; } }
+        public int PlayerCount { get; private set; }
 
         private Socket socket;
         private List<Client> clients;
@@ -81,7 +81,7 @@ namespace MineSharp.Networking
 
         public string GetMOTD()
         {
-            return "Hello world"; //TODO: config or database
+            return "Derp, it's " + DateTime.Now.ToShortTimeString(); //TODO: config or database
         }
 
         void client_OnDisconnect(object sender, EventArgs e)

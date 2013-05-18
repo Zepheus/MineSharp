@@ -19,11 +19,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MineSharp.Networking
+namespace MineSharp.Handlers
 {
-    public enum RecvOpcode : byte
+    public enum SendOpcode : byte
     {
-        Handshake = 0x02,
-        ServerStats = 0xFE
+        Kick = 0xff
     }
 }

@@ -22,17 +22,25 @@ using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.IO;
 
+using MineSharp.Handlers;
+using MineSharp.Logic;
+using MineSharp.Logic.Authentication;
+
 namespace MineSharp.Networking
 {
     class Client
     {
         private string Username { get; set; }
         public bool IsConnected { get { return connected; } }
+        public bool IsAuthenticated { get { return authenticated; } }
+        public Player Player { get { return player; } } 
 
         private Socket sock;
         private PacketReader reader;
+        private Player player;
         private bool connected;
         private bool handling;
+        private bool authenticated;
 
         public event EventHandler<EventArgs> OnDisconnect;
 
@@ -96,6 +104,17 @@ namespace MineSharp.Networking
             foreach (byte b in data)
                 sb.Append(b.ToString("X2") + " ");
             return sb.ToString();
+        }
+
+        public LoginResult Authenticate(string username, string host, uint port)
+        {
+            LoginResult res = Authenticator.Authenticate(username, host, port);
+            if (res == LoginResult.LoggedIn)
+            {
+                //TODO: key exchange
+                this.player = new Player(username);
+            }
+            return res;
         }
     }
 }

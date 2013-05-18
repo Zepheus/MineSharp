@@ -16,7 +16,7 @@
  */
 using System;
 
-namespace MineSharp.Networking
+namespace MineSharp.Handlers
 {
     [AttributeUsage(AttributeTargets.Method)]
     public sealed class PacketHandlerAttribute : Attribute

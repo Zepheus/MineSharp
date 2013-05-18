@@ -23,6 +23,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 
+using MineSharp.Handlers;
+
 namespace MineSharp.Networking
 {
     public class PacketReader

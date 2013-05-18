@@ -20,7 +20,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MineSharp.Networking
+using MineSharp.Networking;
+using MineSharp.Logic.Authentication;
+
+namespace MineSharp.Handlers
 {
     class Handlers
     {
@@ -29,15 +32,13 @@ namespace MineSharp.Networking
         public static async Task HandleServerStats(Client client, PacketReader reader)
         {
             await reader.ReadByte();
-            using (var packet = new PacketWriter(SendOpcode.ServerStats))
+            using (var packet = new PacketWriter(SendOpcode.Kick))
             {
-                string response = String.Format("§1\0{0}\0{1}\0{2}\0{3}\0{4}", 
+                packet.WriteString("§1\0{0}\0{1}\0{2}\0{3}\0{4}", 
                     Server.Protocol, Server.Version, Server.Instance.GetMOTD(),
                     Server.Instance.PlayerCount, Server.Instance.Max);
 
-                packet.WriteString(response);
                 byte[] data = packet.GetBytes();
-
                 client.Send(packet);
             }
         }
@@ -49,7 +50,20 @@ namespace MineSharp.Networking
             string username = await reader.ReadString();
             string host = await reader.ReadString();
             uint port = await reader.ReadUInt32();
-            Console.WriteLine("{0} login attempt on {1}:{2}", username, host, port);
+
+            LoginResult res = client.Authenticate(username, host, port);
+            if (res != LoginResult.LoggedIn)
+            {
+                using (var packet = new PacketWriter(SendOpcode.Kick))
+                {
+                    packet.WriteString("DERP!!! Server disconnected, reason: {0}", res.ToString());
+                    client.Send(packet);
+                }
+            }
+            else
+            {
+                //TODO: chunks?
+            }
         }
        
     }

@@ -21,6 +21,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using MineSharp.Networking;
+using MineSharp.Handlers;
 
 namespace MineSharp
 {

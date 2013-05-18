@@ -22,8 +22,9 @@ using System.Threading.Tasks;
 using System.Reflection;
 
 using MineSharp.Util;
+using MineSharp.Networking;
 
-namespace MineSharp.Networking
+namespace MineSharp.Handlers
 {
     class PacketManager
     {
@@ -51,7 +52,6 @@ namespace MineSharp.Networking
 
         public void LoadHandlers()
         {
-            //handlers.Add(RecvOpcode.ServerStats, Handlers.HandleServerStats);
             handlers.Clear();
             foreach (var info in Reflector.FindMethodsByAttribute<PacketHandlerAttribute>())
             {
