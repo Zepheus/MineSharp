@@ -23,6 +23,7 @@ namespace MineSharp.Networking
 {
     public enum RecvOpcode : byte
     {
-        ServerStats = 0xfe
+        Handshake = 0x02,
+        ServerStats = 0xFE
     }
 }

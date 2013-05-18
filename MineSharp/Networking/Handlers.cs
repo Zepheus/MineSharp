@@ -41,6 +41,16 @@ namespace MineSharp.Networking
                 client.Send(packet);
             }
         }
+
+        [PacketHandler(RecvOpcode.Handshake)]
+        public static async Task HandleHandshake(Client client, PacketReader reader)
+        {
+            byte protocol = await reader.ReadByte();
+            string username = await reader.ReadString();
+            string host = await reader.ReadString();
+            uint port = await reader.ReadUInt32();
+            Console.WriteLine("{0} login attempt on {1}:{2}", username, host, port);
+        }
        
     }
 }

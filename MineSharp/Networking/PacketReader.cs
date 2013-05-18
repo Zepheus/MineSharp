@@ -56,13 +56,13 @@ namespace MineSharp.Networking
         public async Task<uint> ReadUInt32()
         {
             await RequestBytes(4);
-            return (uint)((buffer[3] << 24) | (buffer[2] << 16) | (buffer[1] << 8) | buffer[0]);
+            return (uint)((buffer[0] << 24) | (buffer[1] << 16) | (buffer[2] << 8) | buffer[3]);
         }
 
         public async Task<ushort> ReadUInt16()
         {
             await RequestBytes(2);
-            return (ushort)((buffer[1] << 8) | buffer[0]);
+            return (ushort)((buffer[0] << 8) | buffer[1]);
         }
 
         public async Task<byte> ReadByte()
