@@ -33,57 +33,85 @@ namespace MineSharp.Networking
         private const ushort BufferSize = 8 * 1024;
 
         private byte[] buffer;
+        private int read;
+        private int offset;
         private Socket sock;
 
         public PacketReader(Socket socket)
         {
             this.buffer = new byte[BufferSize];
             this.sock = socket;
+            this.read = 0;
+            this.offset = 0;
         }
 
         public async Task<int> RequestBytes(int len)
         {
             if (len > BufferSize)
-                throw new OverflowException("Buffer is too small");
+                throw new OverflowException("Buffer is too small"); //possibly double buffer at runtime
 
-            int recv = await Task.Factory.FromAsync(
-                         (cb, s) => sock.BeginReceive(buffer, 0, len, SocketFlags.None, cb, s),
+            while(len > read - offset)
+            {
+                if (buffer.Length - read <= len)
+                {
+                    if (offset == read)
+                    {
+                        offset = 0;
+                        read = 0;
+                    }
+                    else
+                    {
+                        // Copy data to the beginning of the buffer since there's not enough space
+                        Buffer.BlockCopy(buffer, offset, buffer, 0, (read - offset));
+                        read -= offset;
+                        offset = 0;
+                    }
+                }
+
+                int recv = await Task.Factory.FromAsync(
+                         (cb, s) => sock.BeginReceive(buffer, read, buffer.Length - read, SocketFlags.None, cb, s),
                          ias => sock.EndReceive(ias), null);
-            if (recv < 0 || len != recv)
-                throw new Exception("Failed to read bytes");
 
-            return recv;
+                if (recv <= 0)
+                    throw new SocketException(); //disconnect
+
+                read += recv;
+            }
+            return len;
         }
 
         public async Task<uint> ReadUInt32()
         {
             await RequestBytes(4);
-            return (uint)((buffer[0] << 24) | (buffer[1] << 16) | (buffer[2] << 8) | buffer[3]);
+            return (uint)((buffer[offset++] << 24) | (buffer[offset++] << 16) | (buffer[offset++] << 8) | buffer[offset++]);
         }
 
         public async Task<ushort> ReadUInt16()
         {
             await RequestBytes(2);
-            return (ushort)((buffer[0] << 8) | buffer[1]);
+            return (ushort)((buffer[offset++] << 8) | buffer[offset++]);
         }
 
         public async Task<byte> ReadByte()
         {
             await RequestBytes(1);
-            return buffer[0];
+            return buffer[offset++];
         }
 
         public async Task<string> ReadString()
         {
             ushort len = await ReadUInt16();
             int recv = await RequestBytes(len * 2); // unicode 2 chars
+
             for (ushort i = 0; i < len; ++i)
             {
-                byte tmp = buffer[i * 2];
-                buffer[(i * 2)] = buffer[(i * 2) + 1];
-                buffer[(i * 2) + 1] = tmp;
+                byte tmp = buffer[offset + (i * 2)];
+                buffer[offset + (i * 2)] = buffer[offset + ((i * 2) + 1)];
+                buffer[offset + ((i * 2) + 1)] = tmp;
             }
-            return Enc.GetString(buffer, 0, len * 2);
+            string value = Enc.GetString(buffer, offset, len * 2);
+            offset += len * 2;
+            return value;
         }
 
         public async Task<RecvOpcode> ReadOpcode()
