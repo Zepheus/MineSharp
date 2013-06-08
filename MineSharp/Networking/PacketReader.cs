@@ -114,6 +114,11 @@ namespace MineSharp.Networking
             return value;
         }
 
+        public async Task<bool> ReadBoolean()
+        {
+            return await ReadByte() > 0;
+        }
+
         public async Task<RecvOpcode> ReadOpcode()
         {
             return (RecvOpcode)(await ReadByte());
