@@ -98,6 +98,12 @@ namespace MineSharp.Networking
             return buffer[offset++];
         }
 
+        public async Task SkipBytes(ushort n)
+        {
+            await RequestBytes(n);
+            offset += n;
+        }
+
         public async Task<string> ReadString()
         {
             ushort len = await ReadUInt16();
