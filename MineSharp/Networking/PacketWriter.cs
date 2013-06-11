@@ -63,17 +63,7 @@ namespace MineSharp.Networking
 
         private void WriteSwappedRawString(string value)
         {
-            ushort len = (ushort)value.Length;
-            byte[] buffer = Enc.GetBytes(value);
-
-            // Fix for endianness
-            for (ushort i = 0; i < len; ++i)
-            {
-                byte tmp = buffer[i * 2];
-                buffer[(i * 2)] = buffer[(i * 2) + 1];
-                buffer[(i * 2) + 1] = tmp;
-            }
-            Write(buffer);
+            Write(ASCIIEncoding.BigEndianUnicode.GetBytes(value));
         }
 
         public void WriteString(string format, params object[] list) {
