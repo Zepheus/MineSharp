@@ -86,6 +86,22 @@ namespace MineSharp.Networking
             return (uint)((buffer[offset++] << 24) | (buffer[offset++] << 16) | (buffer[offset++] << 8) | buffer[offset++]);
         }
 
+        public async Task<float> ReadFloat()
+        {
+            await RequestBytes(4);
+            float val = BitConverter.ToSingle(buffer, offset);
+            offset += 4;
+            return val;
+        }
+
+        public async Task<double> ReadDouble()
+        {
+            await RequestBytes(8);
+            double val = BitConverter.ToDouble(buffer, offset);
+            offset += 8;
+            return val;
+        }
+
         public async Task<ushort> ReadUInt16()
         {
             await RequestBytes(2);
