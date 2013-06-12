@@ -86,9 +86,36 @@ namespace MineSharp.Networking
             return (uint)((buffer[offset++] << 24) | (buffer[offset++] << 16) | (buffer[offset++] << 8) | buffer[offset++]);
         }
 
+        public async Task<int> ReadInt32()
+        {
+            return (int)(await ReadUInt64());
+        }
+
+        public async Task<ulong> ReadUInt64()
+        {
+            await RequestBytes(8);
+            ulong res = 0;
+
+            res |= ((ulong)buffer[offset++] << 56);
+            res |= ((ulong)buffer[offset++] << 48);
+            res |= ((ulong)buffer[offset++] << 40);
+            res |= ((ulong)buffer[offset++] << 32);
+            res |= ((ulong)buffer[offset++] << 24);
+            res |= ((ulong)buffer[offset++] << 16);
+            res |= ((ulong)buffer[offset++] << 8);
+            res |= ((ulong)buffer[offset++]);
+            return res;
+        }
+
+        public async Task<long> ReadInt64()
+        {
+            return (long)(await ReadUInt64());
+        }
+
         public async Task<float> ReadFloat()
         {
             await RequestBytes(4);
+            Array.Reverse(buffer, offset, 4);
             float val = BitConverter.ToSingle(buffer, offset);
             offset += 4;
             return val;
@@ -97,6 +124,7 @@ namespace MineSharp.Networking
         public async Task<double> ReadDouble()
         {
             await RequestBytes(8);
+            Array.Reverse(buffer, offset, 8);
             double val = BitConverter.ToDouble(buffer, offset);
             offset += 8;
             return val;
@@ -106,6 +134,11 @@ namespace MineSharp.Networking
         {
             await RequestBytes(2);
             return (ushort)((buffer[offset++] << 8) | buffer[offset++]);
+        }
+
+        public async Task<short> ReadInt16()
+        {
+            return (short)(await ReadUInt16());
         }
 
         public async Task<byte> ReadByte()
@@ -124,14 +157,7 @@ namespace MineSharp.Networking
         {
             ushort len = await ReadUInt16();
             int recv = await RequestBytes(len * 2); // unicode 2 chars
-
-            for (ushort i = 0; i < len; ++i)
-            {
-                byte tmp = buffer[offset + (i * 2)];
-                buffer[offset + (i * 2)] = buffer[offset + ((i * 2) + 1)];
-                buffer[offset + ((i * 2) + 1)] = tmp;
-            }
-            string value = Enc.GetString(buffer, offset, len * 2);
+            string value = ASCIIEncoding.BigEndianUnicode.GetString(buffer, offset, len * 2);
             offset += len * 2;
             return value;
         }

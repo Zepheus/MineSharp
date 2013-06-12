@@ -46,6 +46,22 @@ namespace MineSharp.Networking
              ((x & 0xff000000) >> 24));
         }
 
+        public override void Write(ulong x)
+        {
+            // Hack since we're lazy
+            byte[] data = BitConverter.GetBytes(x);
+            Array.Reverse(data);
+            Write(data);
+        }
+
+        public override void Write(long x)
+        {
+            // Same hack, same reason
+            byte[] data = BitConverter.GetBytes(x);
+            Array.Reverse(data);
+            Write(data);
+        }
+
         public override void Write(int value)
         {
             this.Write((uint)value);
@@ -54,6 +70,20 @@ namespace MineSharp.Networking
         public override void Write(ushort x)
         {
             base.Write((ushort)(((x & 0xff) << 8) | (x & 0xff00)));
+        }
+
+        public override void Write(double x)
+        {
+            byte[] buffer = BitConverter.GetBytes(x);
+            Array.Reverse(buffer);
+            Write(buffer);
+        }
+
+        public override void Write(float x)
+        {
+            byte[] buffer = BitConverter.GetBytes(x);
+            Array.Reverse(buffer);
+            Write(buffer);
         }
 
         public override void Write(short value)
